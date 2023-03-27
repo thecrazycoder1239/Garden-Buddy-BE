@@ -14,7 +14,6 @@ exports.seed = (seedDataQuery) => {
       username VARCHAR(30) PRIMARY KEY,
       first_name VARCHAR(30) NOT NULL,
       last_name VARCHAR(50) NOT NULL,
-      hashed_password VARCHAR(72) NOT NULL,
       hash VARCHAR(64) NOT NULL
   );
   
