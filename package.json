@@ -1,0 +1,25 @@
+{
+  "name": "garden-buddy-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecrazycoder1239/Garden-Buddy-BE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thecrazycoder1239/Garden-Buddy-BE/issues"
+  },
+  "homepage": "https://github.com/thecrazycoder1239/Garden-Buddy-BE#readme",
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "jest": "^29.5.0"
+  }
+}
