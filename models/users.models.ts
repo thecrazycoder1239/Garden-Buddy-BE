@@ -1,6 +1,31 @@
 const db = require('../db/')
 const bcrypt = require('bcrypt')
 
+exports.validateUserPassword = ({ username, password }) => {
+  return db.query(`
+  SELECT hash FROM users
+  WHERE username = $1
+  `, [username])
+  .then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ msg: 'user not found' })
+    }
+
+    if (!password) {
+      return Promise.reject({ msg: 'empty password field' })
+    }
+
+    const { hash } = rows[0];
+
+    return bcrypt.compare(password, hash)
+  })
+  .then(result => {
+    if (!result) {
+      return Promise.reject({ msg: 'forbidden' })
+    }
+  })
+} 
+
 exports.insertUser = ({ username, first_name, last_name, password }) => {
   
   if (!username || !first_name || !last_name || ! first_name) {
@@ -27,6 +52,26 @@ exports.insertUser = ({ username, first_name, last_name, password }) => {
       return rows[0]
     })
   })
-
   
+}
+
+exports.selectUserByUsername = (username) => {
+  return db.query(`
+  SELECT username, first_name, last_name FROM users
+  WHERE username = $1
+  `, [username])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return rows[0];
+      } else {
+        return Promise.reject({ msg: 'user not found' })
+      }
+    })
+}
+
+exports.removeUserByUsername = (username) => {
+  return db.query(`
+  DELETE FROM users
+  WHERE username = $1
+  `, [username])
 }
