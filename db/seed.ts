@@ -4,7 +4,7 @@ exports.seed = (seedDataQuery) => {
   return db.query(`
     DROP TABLE IF EXISTS subscriptions;
     DROP TABLE IF EXISTS plant_reviews;
-    DROP TABLE IF EXISTS users_tasks;
+    DROP TABLE IF EXISTS users_plants_tasks;
     DROP TABLE IF EXISTS users_plants;
     DROP TABLE IF EXISTS tasks;
     DROP TABLE IF EXISTS users;
@@ -30,7 +30,8 @@ exports.seed = (seedDataQuery) => {
         planted_date DATE
       );
 
-      CREATE TABLE users_tasks(
+      CREATE TABLE users_plants_tasks(
+        users_task_id SERIAL PRIMARY KEY,
         users_plant_id INT REFERENCES users_plants(users_plant_id) ON DELETE CASCADE NOT NULL,
         task_slug VARCHAR(25) REFERENCES tasks(task_slug) ON DELETE CASCADE  NOT NULL,
         task_start_date DATE NOT NULL
