@@ -9,7 +9,18 @@ beforeEach(() => {
   INSERT INTO users 
     (username, first_name, last_name, hash)
   VALUES
-    ('username','user','name','$2b$10$yjRrtd2cr3xO5sw/Nky/6.s7vLtiUfK7CfKqwY5GRJOPZCcZKLZQq')
+    ('username','user','name','$2b$10$yjRrtd2cr3xO5sw/Nky/6.s7vLtiUfK7CfKqwY5GRJOPZCcZKLZQq');
+
+  INSERT INTO tasks
+    (task_slug, description)
+  VALUES
+    ('water', 'give plants some aqua'),
+    ('fertilize', 'give plants some nutrients');
+
+  INSERT INTO users_plants
+    (username, plant_id)
+  VALUES
+    ('username', 10)
   `); //The hash is for the password 'password'
 });
 
@@ -228,4 +239,29 @@ describe("app", () => {
       });
     });
   });
+  
+  describe('/users-plants/:users_plant_id/tasks', () => {
+    describe('POST', () => {
+      it('201: responds with newly created task', () => {
+        return request(app)
+        .post("/api/users-plants/1/tasks")
+        .send({
+          password: 'password',
+          task_slug: 'water',
+          task_start_date: '2023-04-01'
+        })
+        .expect(201)
+        .then(({ body }) => {
+          const { task } = body;
+          
+          expect(task).toMatchObject({
+            users_task_id: expect.any(Number),
+            users_plant_id: 1,
+            task_slug: 'water',
+            task_start_date: expect.any(String)
+          })
+        })
+      })
+    })
+  })
 });
