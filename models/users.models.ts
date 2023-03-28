@@ -1,6 +1,7 @@
 const db = require('../db/')
 const bcrypt = require('bcrypt')
 
+//validateUserPassword handles 404 for non-existent users and 400 for empty password field
 exports.validateUserPassword = ({ username, password }) => {
   return db.query(`
   SELECT hash FROM users
@@ -74,4 +75,20 @@ exports.removeUserByUsername = (username) => {
   DELETE FROM users
   WHERE username = $1
   `, [username])
+}
+
+exports.insertPlantToUser= ({username, plant_id, planted_date}) => {
+  return db.query(`
+  INSERT INTO users_plants
+  (username, plant_id, planted_date)
+  VALUES 
+  ($1, $2, $3)
+  RETURNING *
+  `, [username, plant_id, planted_date])
+  .then(({rows})=> {
+    return {
+      ...rows[0],
+      tasks: []
+    }
+  })
 }

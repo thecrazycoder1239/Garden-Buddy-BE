@@ -4,7 +4,8 @@ exports.seed = (seedDataQuery) => {
   return db.query(`
   DROP TABLE IF EXISTS subscriptions;
   DROP TABLE IF EXISTS plant_reviews;
-  DROP TABLE IF EXISTS user_tasks;
+  DROP TABLE IF EXISTS users_tasks;
+  DROP TABLE IF EXISTS users_plants;
   DROP TABLE IF EXISTS tasks;
   DROP TABLE IF EXISTS users;
   `)
@@ -21,25 +22,30 @@ exports.seed = (seedDataQuery) => {
       task_slug VARCHAR(25) PRIMARY KEY,
       description TEXT
   );
+
+  CREATE TABLE users_plants(
+    username VARCHAR(30) REFERENCES users(username) ON DELETE CASCADE NOT NULL,
+    users_plant_id SERIAL PRIMARY KEY,
+    plant_id INT NOT NULL,
+    planted_date DATE
+ );
   
-  CREATE TABLE user_tasks(
-     username VARCHAR(30) REFERENCES users(username) NOT NULL,
-     plant_id INT NOT NULL,
-     planted_date DATE,
-     task_slug VARCHAR(25) REFERENCES tasks(task_slug) NOT NULL,
+  CREATE TABLE users_tasks(
+     users_plant_id INT REFERENCES users_plants(users_plant_id) ON DELETE CASCADE NOT NULL,
+     task_slug VARCHAR(25) REFERENCES tasks(task_slug) ON DELETE CASCADE  NOT NULL,
      task_start_date DATE NOT NULL
   );
   
   CREATE TABLE plant_reviews(
       review_id SERIAL PRIMARY KEY,
-      author_username VARCHAR(30) REFERENCES users(username) NOT NULL,
+      author_username VARCHAR(30) REFERENCES users(username) ON DELETE CASCADE  NOT NULL,
       plant_id INT NOT NULL,
       stars INT NOT NULL,
       body TEXT
   );
   
   CREATE TABLE subscriptions(
-       username VARCHAR(30) REFERENCES users(username) NOT NULL,
+       username VARCHAR(30) REFERENCES users(username) ON DELETE CASCADE  NOT NULL,
        push_subscription JSON,
        push_endpoint TEXT
   );

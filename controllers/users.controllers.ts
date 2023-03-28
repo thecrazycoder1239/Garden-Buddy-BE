@@ -1,4 +1,4 @@
-const { insertUser, selectUserByUsername, removeUserByUsername, validateUserPassword } = require('../models/users.models')
+const { insertUser, selectUserByUsername, removeUserByUsername, validateUserPassword, insertPlantToUser } = require('../models/users.models')
 
 exports.postUser = (req, res, next) => {
 
@@ -35,4 +35,18 @@ exports.deleteUserByUsername = (req, res, next) => {
     })
     .catch(next)
 
+}
+
+exports.postPlantToUser = (req, res, next) => {
+  const {username} = req.params;
+  const {password, plant_id, planted_date} = req.body;
+  validateUserPassword({username, password})
+  .then(() => {
+   return insertPlantToUser({username, plant_id, planted_date})
+  })
+  .then((plant) => {
+    res.status(201).send({plant: plant})
+  })
+  .catch(next)
+  
 }
