@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "psql -f db/setup-db.sql && jest",
     "prepare": "husky install"
   },
   "repository": {
