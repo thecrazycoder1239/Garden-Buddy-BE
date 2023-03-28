@@ -239,87 +239,181 @@ describe("app", () => {
       });
     });
   });
-  
-  describe('/users-plants/:users_plant_id/tasks', () => {
-    describe('POST', () => {
-      it('201: responds with newly created task', () => {
-        return request(app)
-        .post("/api/users-plants/1/tasks")
-        .send({
-          password: 'password',
-          task_slug: 'water',
-          task_start_date: '2023-04-01'
-        })
-        .expect(201)
-        .then(({ body }) => {
-          const { task } = body;
-          
-          expect(task).toMatchObject({
-            users_task_id: expect.any(Number),
-            users_plant_id: 1,
-            task_slug: 'water',
-            task_start_date: expect.any(String)
-          })
-        })
-      })
 
-      it('403: responds with forbidden when given incorrect password', () => {
+  describe("/users-plants/:users_plant_id/tasks", () => {
+    describe("POST", () => {
+      it("201: responds with newly created task", () => {
         return request(app)
           .post("/api/users-plants/1/tasks")
           .send({
-            password: 'password1',
-            task_slug: 'water',
-            task_start_date: '2023-04-1'
+            password: "password",
+            task_slug: "water",
+            task_start_date: "2023-04-01",
           })
-          .expect(403)
-      })
+          .expect(201)
+          .then(({ body }) => {
+            const { task } = body;
+
+            expect(task).toMatchObject({
+              users_task_id: expect.any(Number),
+              users_plant_id: 1,
+              task_slug: "water",
+              task_start_date: expect.any(String),
+            });
+          });
+      });
+
+      it("403: responds with forbidden when given incorrect password", () => {
+        return request(app)
+          .post("/api/users-plants/1/tasks")
+          .send({
+            password: "password1",
+            task_slug: "water",
+            task_start_date: "2023-04-1",
+          })
+          .expect(403);
+      });
 
       it('400: responds "empty password field" if given no password', () => {
         return request(app)
           .post("/api/users-plants/1/tasks")
           .send({
-            task_slug: 'water',
-            task_start_date: '2023-04-1'
+            task_slug: "water",
+            task_start_date: "2023-04-1",
           })
           .expect(400)
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("empty password field")
-          })
-      })
+            expect(msg).toBe("empty password field");
+          });
+      });
 
       it('404: responds with "plant not found" when given non-existent users_plant_id', () => {
         return request(app)
           .post("/api/users-plants/4903295/tasks")
           .send({
-            password: 'password',
-            task_slug: 'water',
-            task_start_date: '2023-04-1'
+            password: "password",
+            task_slug: "water",
+            task_start_date: "2023-04-1",
           })
           .expect(404)
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("plant not found")
-          })
-      })
+            expect(msg).toBe("plant not found");
+          });
+      });
 
-      it('400: responds when plant id is not numeric', () => {
+      it("400: responds when plant id is not numeric", () => {
         return request(app)
           .post("/api/users-plants/invalid_id/tasks")
           .send({
-            password: 'password',
-            task_slug: 'water',
-            task_start_date: '2023-04-01'
+            password: "password",
+            task_slug: "water",
+            task_start_date: "2023-04-01",
           })
           .expect(400)
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("id must be numeric")
+            expect(msg).toBe("Invalid plant id");
+          });
+      });
+    });
+  });
+  describe("/users/:username/plants", () => {
+    describe("POST", () => {
+      it("201: Returns added plant", () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password",
+            plant_id: 7,
+            planted_date: "2023-04-01",
           })
-      })
-    })
-  })
+          .expect(201)
+          .then(({ body }) => {
+            const { plant } = body;
+            expect(plant).toMatchObject({
+              plant_id: 7,
+              users_plant_id: expect.any(Number),
+              username: "username",
+              planted_date: expect.any(String),
+              tasks: expect.any(Array),
+            });
+          });
+      });
+
+      it("403: returns forbidden when incorrect password is provided for user", () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password1",
+            plant_id: 7,
+            planted_date: "2023-04-01",
+          })
+          .expect(403);
+      });
+
+      it("400: returns missing field when not all fields are completed", () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password",
+            planted_date: "2023-04-01",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("Missing required field");
+          });
+      });
+
+      it('400: returns "invalid date" when date not a valid date', () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password",
+            plant_id: 7,
+            planted_date: "2023-13-42",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("Invalid date");
+          });
+      });
+
+      it('400: returns "invalid date" when date not a valid date', () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password",
+            plant_id: 7,
+            planted_date: "2023-thirteen-42",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("Invalid date");
+          });
+      });
+
+      it('400: returns "Invalid plant id" when date not a valid plant id', () => {
+        return request(app)
+          .post("/api/users/username/plants")
+          .send({
+            password: "password",
+            plant_id: "seven",
+            planted_date: "2023-12-25",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("Invalid plant id");
+          });
+      });
+    });
+  });
 });

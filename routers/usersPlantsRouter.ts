@@ -1,8 +1,8 @@
-const usersPlantsRouter = require('express').Router();
+const usersPlantsRouter = require("express").Router();
 const {
   postTaskToUsersPlantsTasks,
-} = require('../controllers/users-plants.controllers')
+} = require("../controllers/users-plants.controllers");
 
-usersPlantsRouter.post("/:users_plant_id/tasks", postTaskToUsersPlantsTasks)
+usersPlantsRouter.post("/:users_plant_id/tasks", postTaskToUsersPlantsTasks);
 
 module.exports = usersPlantsRouter;

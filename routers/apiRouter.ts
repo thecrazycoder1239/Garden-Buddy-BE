@@ -1,6 +1,6 @@
 const apiRouter = require("express").Router();
 const usersRouter = require("./usersRouter");
-const usersPlantsRouter = require("./usersPlantsRouter")
+const usersPlantsRouter = require("./usersPlantsRouter");
 
 apiRouter.use("/users", usersRouter);
 

@@ -1,16 +1,19 @@
 const db = require("./");
 
 exports.seed = (seedDataQuery) => {
-  return db.query(`
+  return db
+    .query(
+      `
     DROP TABLE IF EXISTS subscriptions;
     DROP TABLE IF EXISTS plant_reviews;
     DROP TABLE IF EXISTS users_plants_tasks;
     DROP TABLE IF EXISTS users_plants;
     DROP TABLE IF EXISTS tasks;
     DROP TABLE IF EXISTS users;
-  `)
-  .then(() => {
-    return db.query(`
+  `
+    )
+    .then(() => {
+      return db.query(`
       CREATE TABLE users(
         username VARCHAR(30) PRIMARY KEY,
         first_name VARCHAR(30) NOT NULL,
