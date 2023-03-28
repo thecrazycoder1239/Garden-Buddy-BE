@@ -12,6 +12,7 @@ app.use(handlePSQLerrors)
 app.use(handleCustomErrors)
 
 app.use((err, req, res, next) => {
+  console.log(req.method, req.url)
   console.error(err);
   res.sendStatus(500)
 })
