@@ -7,6 +7,8 @@ exports.handlePSQLerrors = (error, request, response, next) => {
       .send({ msg: "Username too long, maximum 30 characters!" });
   } else if (error.code === "23502") {
     response.status(400).send({ msg: "Missing required field" });
+  } else if (error.code === "23503") {
+    response.status(404).send({ msg: "task not found" });
   } else if (["22008", "22007"].includes(error.code)) {
     response.status(400).send({ msg: "Invalid date" });
   } else if (error.code === "22P02") {

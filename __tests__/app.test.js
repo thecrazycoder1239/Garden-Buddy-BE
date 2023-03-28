@@ -320,6 +320,38 @@ describe("app", () => {
             expect(msg).toBe("Invalid plant id");
           });
       });
+
+      it("404: responds when no task with task_slug", () => {
+        return request(app)
+          .post("/api/users-plants/1/tasks")
+          .send({
+            password: "password",
+            task_slug: "not_a_task",
+            task_start_date: "2023-04-05"
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("task not found")
+          })
+      })
+
+      it("400: responds when date is not valid format", () => {
+        return request(app)
+          .post("/api/users-plants/1/tasks")
+          .send({
+            password: "password",
+            task_slug: "water",
+            task_start_date: "not-a-valid-date"
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("Invalid date")
+          })
+      })
     });
   });
   describe("/users/:username/plants", () => {
@@ -400,7 +432,7 @@ describe("app", () => {
           });
       });
 
-      it('400: returns "Invalid plant id" when date not a valid plant id', () => {
+      it('400: returns "Invalid plant id" when plant_id not a valid plant id', () => {
         return request(app)
           .post("/api/users/username/plants")
           .send({
