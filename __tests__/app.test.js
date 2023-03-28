@@ -262,6 +262,64 @@ describe("app", () => {
           })
         })
       })
+
+      it('403: responds with forbidden when given incorrect password', () => {
+        return request(app)
+          .post("/api/users-plants/1/tasks")
+          .send({
+            password: 'password1',
+            task_slug: 'water',
+            task_start_date: '2023-04-1'
+          })
+          .expect(403)
+      })
+
+      it('400: responds "empty password field" if given no password', () => {
+        return request(app)
+          .post("/api/users-plants/1/tasks")
+          .send({
+            task_slug: 'water',
+            task_start_date: '2023-04-1'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("empty password field")
+          })
+      })
+
+      it('404: responds with "plant not found" when given non-existent users_plant_id', () => {
+        return request(app)
+          .post("/api/users-plants/4903295/tasks")
+          .send({
+            password: 'password',
+            task_slug: 'water',
+            task_start_date: '2023-04-1'
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("plant not found")
+          })
+      })
+
+      it('400: responds when plant id is not numeric', () => {
+        return request(app)
+          .post("/api/users-plants/invalid_id/tasks")
+          .send({
+            password: 'password',
+            task_slug: 'water',
+            task_start_date: '2023-04-01'
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("id must be numeric")
+          })
+      })
     })
   })
 });
