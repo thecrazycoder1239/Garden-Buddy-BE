@@ -1,26 +1,29 @@
-const { insertUser, selectUserByUsername, removeUserByUsername, validateUserPassword } = require('../models/users.models')
+const {
+  insertUser,
+  selectUserByUsername,
+  removeUserByUsername,
+  validateUserPassword,
+} = require("../models/users.models");
 
 exports.postUser = (req, res, next) => {
+  const { username, first_name, last_name, password } = req.body;
 
-  const { username, first_name, last_name, password } = req.body
-  
-  insertUser({username, first_name, last_name, password})
+  insertUser({ username, first_name, last_name, password })
     .then((user) => {
-      res.status(201).send({user: user})
+      res.status(201).send({ user: user });
     })
-    .catch(next)
-
-}
+    .catch(next);
+};
 
 exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
 
   selectUserByUsername(username)
-    .then(user => {
-      res.status(200).send({ user: user })
+    .then((user) => {
+      res.status(200).send({ user: user });
     })
-    .catch(next)
-}
+    .catch(next);
+};
 
 exports.deleteUserByUsername = (req, res, next) => {
   const { username } = req.params;
@@ -28,11 +31,10 @@ exports.deleteUserByUsername = (req, res, next) => {
 
   validateUserPassword({ username, password })
     .then(() => {
-      return removeUserByUsername(username)
+      return removeUserByUsername(username);
     })
-    .then(user => {
-      res.sendStatus(204)
+    .then((user) => {
+      res.sendStatus(204);
     })
-    .catch(next)
-
-}
+    .catch(next);
+};
