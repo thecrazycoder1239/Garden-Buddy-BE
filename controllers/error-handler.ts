@@ -7,8 +7,14 @@ exports.handlePSQLerrors = (error, request, response, next) => {
  };
 
  exports.handleCustomErrors = (error, request, response, next) => {
-    if (error.msg) {
-        response.status(400).send({msg: error.msg})
-    } else next(error)
+  if (error.msg === 'forbidden') {
+    response.sendStatus(403)
+  } else if (error.msg) {
+    if (error.msg.endsWith('not found')) {
+      response.status(404).send({msg: error.msg})
+    } else {
+      response.status(400).send({msg: error.msg})
+    }
+  } else next(error)
  }
 

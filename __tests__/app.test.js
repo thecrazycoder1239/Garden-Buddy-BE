@@ -4,9 +4,13 @@ const db = require('../db')
 const app = require('../app')
 const bcrypt = require('bcrypt')
 
-
 beforeEach(() => {
-  return seed();
+  return seed(`
+  INSERT INTO users 
+    (username, first_name, last_name, hash)
+  VALUES
+    ('username','user','name','$2b$10$yjRrtd2cr3xO5sw/Nky/6.s7vLtiUfK7CfKqwY5GRJOPZCcZKLZQq')
+  `); //The hash is for the password 'password'
 })
 
 afterAll(() => {
@@ -124,6 +128,100 @@ describe('app', () => {
           const {msg} = body;
           expect(msg).toBe("Missing required field")
         })
+      })
+    })
+   })
+
+  describe('/users/:username', () => {
+    describe('GET', () => {
+      it('200: returns user without password', () => {
+        return request(app)
+          .get('/api/users/username')
+          .expect(200)
+          .then(({ body }) => {
+            const { user } = body;
+
+            expect(user).toMatchObject({
+              username: 'username',
+              first_name: 'user',
+              last_name: 'name'
+            })
+            expect(user).not.toHaveProperty('password')
+          })
+      })
+
+      it('404: returns "user not found" when no user with username', () => {
+        return request(app)
+          .get('/api/users/usernam')
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe('user not found')
+          })
+      })
+    })
+
+    describe('DELETE', () => {
+      it('204: deletes a user from database when given correct password in body', () => {
+        return request(app)
+          .delete('/api/users/username')
+          .send({
+            password: 'password'
+          })
+          .expect(204)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users
+            WHERE username = 'username'
+            `)
+          })
+          .then(({rows}) => {
+            expect(rows).toHaveLength(0)
+          })
+      })
+
+      it('403: returns forbidden when incorrect password is provided for user', () => {
+        return request(app)
+          .delete('/api/users/username')
+          .expect(403)
+          .send({
+            password: 'password1'
+          })
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users
+            WHERE username = 'username'
+            `)
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(1);
+          })
+      })
+
+      it('404: returns "user not found" when user does not exist', () => {
+        return request(app)
+          .delete('/api/users/invalid_username')
+          .send({
+            password: 'pass'
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe('user not found');
+          })
+      })
+
+      it('400: returns "empty password field" when password is not sent with request ', () => {
+        return request(app)
+          .delete('/api/users/username')
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe('empty password field')
+          })
       })
     })
    })

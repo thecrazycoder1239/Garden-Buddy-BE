@@ -1,4 +1,4 @@
-const { insertUser } = require('../models/users.models')
+const { insertUser, selectUserByUsername, removeUserByUsername, validateUserPassword } = require('../models/users.models')
 
 exports.postUser = (req, res, next) => {
 
@@ -6,8 +6,32 @@ exports.postUser = (req, res, next) => {
   
   insertUser({username, first_name, last_name, password})
     .then((user) => {
-      res.status(201);
-      res.send({user: user})
+      res.status(201).send({user: user})
+    })
+    .catch(next)
+
+}
+
+exports.getUserByUsername = (req, res, next) => {
+  const { username } = req.params;
+
+  selectUserByUsername(username)
+    .then(user => {
+      res.status(200).send({ user: user })
+    })
+    .catch(next)
+}
+
+exports.deleteUserByUsername = (req, res, next) => {
+  const { username } = req.params;
+  const { password } = req.body;
+
+  validateUserPassword({ username, password })
+    .then(() => {
+      return removeUserByUsername(username)
+    })
+    .then(user => {
+      res.sendStatus(204)
     })
     .catch(next)
 
