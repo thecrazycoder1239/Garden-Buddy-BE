@@ -47,7 +47,7 @@ exports.seed = (seedDataQuery) => {
   })
   .then(() => {
     if (seedDataQuery) {
-      db.query(seedDataQuery)
+      return db.query(seedDataQuery)
     }
   })
 }
