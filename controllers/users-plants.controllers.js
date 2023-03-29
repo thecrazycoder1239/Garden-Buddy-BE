@@ -2,6 +2,7 @@ const {
   insertTaskIntoUsersPlantsTasks,
   validateUsersPlantPassword,
   selectUsersPlantById,
+  removeUsersPlantById,
 } = require("../models/users-plants.models");
 
 exports.postTaskToUsersPlantsTasks = (req, res, next) => {
@@ -32,6 +33,20 @@ exports.getUsersPlantById = (req, res, next) => {
     })
     .then((plant) => {
       res.status(200).send({ plant });
+    })
+    .catch(next);
+};
+
+exports.deleteUsersPlantById = (req, res, next) => {
+  const { users_plant_id } = req.params;
+  const { password } = req.body;
+
+  validateUsersPlantPassword({ users_plant_id, password })
+    .then(() => {
+      return removeUsersPlantById(users_plant_id);
+    })
+    .then(() => {
+      res.sendStatus(204);
     })
     .catch(next);
 };
