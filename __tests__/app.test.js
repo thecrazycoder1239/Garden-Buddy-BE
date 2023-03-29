@@ -484,4 +484,18 @@ describe("app", () => {
       });
     });
   });
+
+  describe('/add-subscription', () => {
+    it('403: does not authorise creating a subscription for a user with incorrect credentials', () => {
+      return request(app)
+      .post("/add-subscription")
+      .send({
+        user: {
+          username: "username",
+          password: "password1"
+        }
+      })
+      .expect(403)
+    })
+  })
 });
