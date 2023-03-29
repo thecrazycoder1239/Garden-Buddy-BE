@@ -1,20 +1,25 @@
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const {handlePSQLerrors, handleCustomErrors} = require('./controllers/error-handler')
+const {
+  handlePSQLerrors,
+  handleCustomErrors,
+} = require("./controllers/error-handler");
 
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-const apiRouter = require('./routers/apiRouter')
+const apiRouter = require("./routers/apiRouter");
 
-app.use('/api', apiRouter)
+app.use("/api", apiRouter);
 
-app.use(handlePSQLerrors)
-app.use(handleCustomErrors)
+app.use(handlePSQLerrors);
+app.use(handleCustomErrors);
 
 app.use((err, req, res, next) => {
-  console.log(req.method, req.url)
+  console.log(req.method, req.url);
   console.error(err);
-  res.sendStatus(500)
-})
+  res.sendStatus(500);
+});
 
 module.exports = app;

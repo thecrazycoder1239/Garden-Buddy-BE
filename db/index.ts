@@ -1,13 +1,13 @@
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
-const pathToEnvFile = `${__dirname}/../.env.test`
+const pathToEnvFile = `${__dirname}/../.env.test`;
 
-require('dotenv').config({
-  path: pathToEnvFile
-})
+require("dotenv").config({
+  path: pathToEnvFile,
+});
 
 if (!process.env.PGDATABASE) {
-  throw new Error('No PGDATABASE set')
+  throw new Error("No PGDATABASE set");
 }
 
 module.exports = new Pool();
