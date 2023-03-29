@@ -4,6 +4,7 @@ const {
   getUserByUsername,
   deleteUserByUsername,
   postPlantToUser,
+  getUsersPlantsByUsername,
 } = require("../controllers/users.controllers");
 
 usersRouter.post("/", postUser);
@@ -13,6 +14,9 @@ usersRouter
   .get(getUserByUsername)
   .delete(deleteUserByUsername);
 
-usersRouter.route("/:username/plants").post(postPlantToUser);
+usersRouter
+  .route("/:username/plants")
+  .post(postPlantToUser)
+  .get(getUsersPlantsByUsername);
 
 module.exports = usersRouter;

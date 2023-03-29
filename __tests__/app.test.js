@@ -534,5 +534,53 @@ describe("/users/:username/plants", () => {
           expect(msg).toBe("Invalid plant id");
         });
     });
+    describe("GET", () => {
+      it("200: returns list of all plants for a single user ", () => {
+        return request(app)
+          .get("/api/users/username/plants")
+          .send({ password: "password" })
+          .expect(200)
+          .then(({ body }) => {
+            const { plants } = body;
+            expect(plants).toMatchObject([
+              {
+                username: "username",
+                plant_id: 10,
+                users_plant_id: 1,
+                planted_date: expect.any(String),
+              },
+              { username: "username", plant_id: 6, users_plant_id: 3 },
+              { username: "username", plant_id: 1, users_plant_id: 4 },
+              {
+                username: "username",
+                plant_id: 10,
+                users_plant_id: 6,
+                planted_date: expect.any(String),
+              },
+            ]);
+          });
+      });
+
+      it("403: returns forbidden when incorrect password is provided for user", () => {
+        return request(app)
+          .get("/api/users/username/plants")
+          .send({ password: "passwordd" })
+          .expect(403);
+      });
+    });
+  });
+
+  describe("/add-subscription", () => {
+    it("403: does not authorise creating a subscription for a user with incorrect credentials", () => {
+      return request(app)
+        .post("/add-subscription")
+        .send({
+          user: {
+            username: "username",
+            password: "password1",
+          },
+        })
+        .expect(403);
+    });
   });
 });
