@@ -433,6 +433,71 @@ describe("app", () => {
           });
       });
     });
+
+    describe("PATCH", () => {
+      it("200: responds with updated task", () => {
+        return request(app)
+          .patch("/api/users-tasks/2")
+          .send({
+            password: "password2",
+            task_start_date: "2023-06-01",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { task } = body;
+
+            expect(task).toMatchObject({
+              users_task_id: 2,
+              users_plant_id: 2,
+              task_slug: "water",
+            });
+            expect(task.task_start_date).toMatch(/(2023-06-01)|(2023-05-31)/);
+          });
+      });
+      it("200: can update task_slug", () => {
+        return request(app)
+          .patch("/api/users-tasks/2")
+          .send({
+            password: "password2",
+            task_start_date: "2023-05-31",
+            task_slug: "fertilize",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { task } = body;
+
+            expect(task).toMatchObject({
+              users_task_id: 2,
+              users_plant_id: 2,
+              task_slug: "fertilize",
+              task_start_date: expect.any(String),
+            });
+          });
+      });
+
+      it("404: responds when body contains neither task_slug nor task_start_date", () => {
+        return request(app)
+          .patch("/api/users-tasks/4")
+          .send({
+            password: "password",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("include either task_slug or task_start_date");
+          });
+      });
+
+      it("403: responds with forbidden when given invalid password", () => {
+        return request(app)
+          .patch("/api/users-tasks/1")
+          .send({
+            password: "invalid",
+          })
+          .expect(403);
+      });
+    });
   });
 
   describe("/users-plants/:users_plant_id", () => {
