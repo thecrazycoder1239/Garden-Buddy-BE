@@ -13,7 +13,7 @@ exports.validateUserPassword = ({ username, password }) => {
       [username]
     )
     .then(({ rows }) => {
-      return validatePasswordFromRows({ rows, password, resourceName: "user" })
+      return validatePasswordFromRows({ rows, password, resourceName: "user" });
     });
 };
 

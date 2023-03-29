@@ -15,7 +15,11 @@ exports.validateUsersPlantPassword = ({ users_plant_id, password }) => {
       [users_plant_id]
     )
     .then(({ rows }) => {
-      return validatePasswordFromRows({ rows, password, resourceName: "users_plant" })
+      return validatePasswordFromRows({
+        rows,
+        password,
+        resourceName: "users_plant",
+      });
     });
 };
 
