@@ -370,6 +370,71 @@ describe("app", () => {
     });
   });
 
+  describe("/users-tasks/:users_task_id", () => {
+    describe("DELETE", () => {
+      it("204: removes task from database", () => {
+        return request(app)
+          .delete("/api/users-tasks/1")
+          .send({
+            password: "password2",
+          })
+          .expect(204)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_tasks
+            WHERE users_task_id = 1
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(0);
+          });
+      });
+
+      it("403: responses with forbidden when given incorrect password", () => {
+        return request(app)
+          .delete("/api/users-tasks/1")
+          .send({
+            password: "password_wrong",
+          })
+          .expect(403)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_tasks
+            WHERE users_task_id = 1
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(1);
+          });
+      });
+
+      it("404: responds when :users_task_id does not exist", () => {
+        return request(app)
+          .delete("/api/users-tasks/100")
+          .send({
+            password: "pass",
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("users_task not found");
+          });
+      });
+
+      it("400: responds when password field is missing", () => {
+        return request(app)
+          .delete("/api/users-tasks/1")
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("empty password field");
+          });
+      });
+    });
+  });
+
   describe("/users-plants/:users_plant_id", () => {
     describe("GET", () => {
       it("200: responds with tasks for users_plant", () => {
