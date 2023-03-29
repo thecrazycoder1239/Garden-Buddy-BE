@@ -1,6 +1,7 @@
 const {
   insertTaskIntoUsersPlantsTasks,
   validateUsersPlantPassword,
+  selectUsersPlantById,
 } = require("../models/users-plants.models");
 
 exports.postTaskToUsersPlantsTasks = (req, res, next) => {
@@ -20,3 +21,17 @@ exports.postTaskToUsersPlantsTasks = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getUsersPlantById = (req, res, next) => {
+  const { users_plant_id } = req.params;
+  const { password } = req.body;
+
+  validateUsersPlantPassword({ users_plant_id, password })
+    .then(() => {
+      return selectUsersPlantById(users_plant_id)
+    })
+    .then(plant => {
+      res.status(200).send({ plant })
+    })
+    .catch(next)
+}
