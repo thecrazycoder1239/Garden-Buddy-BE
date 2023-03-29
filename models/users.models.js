@@ -102,3 +102,15 @@ exports.insertPlantToUser = ({ username, plant_id, planted_date }) => {
       return Object.assign(Object.assign({}, rows[0]), { tasks: [] });
     });
 };
+
+exports.selectUsersPlantsByUsername = (username) => {
+  return db
+  .query(`
+  SELECT * FROM users_plants
+  WHERE username = $1
+  `, [username]
+  )
+  .then(({rows}) => {
+    return rows
+  })
+}

@@ -9,7 +9,8 @@ beforeEach(() => {
   INSERT INTO users 
     (username, first_name, last_name, hash)
   VALUES
-    ('username','user','name','$2b$10$yjRrtd2cr3xO5sw/Nky/6.s7vLtiUfK7CfKqwY5GRJOPZCcZKLZQq');
+    ('username','user','name','$2b$10$yjRrtd2cr3xO5sw/Nky/6.s7vLtiUfK7CfKqwY5GRJOPZCcZKLZQq'),
+    ('username2','user2','name2','$2b$10$J/HwEpPa09Sm.syOCca73uQviX37jFp9ynShQNBb6rbmXbeLQQHNS');
 
   INSERT INTO tasks
     (task_slug, description)
@@ -18,10 +19,11 @@ beforeEach(() => {
     ('fertilize', 'give plants some nutrients');
 
   INSERT INTO users_plants
-    (username, plant_id)
+    (username, plant_id, planted_date)
   VALUES
-    ('username', 10)
+    ('username', 10, '2023-03-29'), ('username2', 4, NULL), ('username', 6, NULL), ('username', 1, NULL), ('username2', 10, NULL), ('username', 10, '2022-03-29')
   `); //The hash is for the password 'password'
+  // The password for any username is passsword + addedNumber
 });
 
 afterAll(() => {
@@ -445,6 +447,40 @@ describe("app", () => {
             const { msg } = body;
             expect(msg).toBe("Invalid plant id");
           });
+      });
+    });
+    describe("GET", () => {
+      it("200: returns list of all plants for a single user ", () => {
+        return request(app)
+          .get("/api/users/username/plants")
+          .send({ password: "password" })
+          .expect(200)
+          .then(({ body }) => {
+            const { plants } = body;
+            expect(plants).toMatchObject([
+              {
+                username: "username",
+                plant_id: 10,
+                users_plant_id: 1,
+                planted_date: expect.any(String),
+              },
+              { username: "username", plant_id: 6, users_plant_id: 3 },
+              { username: "username", plant_id: 1, users_plant_id: 4 },
+              {
+                username: "username",
+                plant_id: 10,
+                users_plant_id: 6,
+                planted_date: expect.any(String),
+              },
+            ]);
+          });
+      });
+
+      it("403: returns forbidden when incorrect password is provided for user", () => {
+        return request(app)
+          .get("/api/users/username/plants")
+          .send({ password: "passwordd" })
+          .expect(403);
       });
     });
   });
