@@ -1,3 +1,5 @@
+const db = require('../db/')
+
 exports.insertSubscription = ({ username, pushSubscription }) => {
   return db.query(`
   INSERT INTO subscriptions
@@ -13,7 +15,4 @@ exports.deleteSubscription = ({ pushSubscription }) => {
   DELETE FROM subscriptions
   WHERE push_endpoint = $1
   `, [pushSubscription.endpoint])
-  .then(() => {
-    res.sendStatus(200)
-  })
 }

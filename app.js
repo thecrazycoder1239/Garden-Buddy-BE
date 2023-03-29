@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const { 
   addSubscription,
@@ -10,6 +11,8 @@ const {
 } = require("./controllers/error-handler");
 const apiRouter = require("./routers/apiRouter");
 const compositeHandler = require("./controllers/composite-handler");
+
+app.use(cors())
 
 app.use(express.json());
 

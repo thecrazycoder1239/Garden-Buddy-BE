@@ -20,5 +20,8 @@ exports.removeSubscription = (req, res, next) => {
   const { pushSubscription } = req.body;
 
   deleteSubscription({ pushSubscription })
+    .then(() => {
+      res.sendStatus(200)
+    })
     .catch(next)
 }
