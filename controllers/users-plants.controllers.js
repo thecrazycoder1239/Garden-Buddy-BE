@@ -3,6 +3,7 @@ const {
   validateUsersPlantPassword,
   selectUsersPlantById,
   removeUsersPlantById,
+  updateUsersPlantById,
 } = require("../models/users-plants.models");
 
 exports.postTaskToUsersPlantsTasks = (req, res, next) => {
@@ -47,6 +48,23 @@ exports.deleteUsersPlantById = (req, res, next) => {
     })
     .then(() => {
       res.sendStatus(204);
+    })
+    .catch(next);
+};
+
+exports.patchUsersPlantById = (req, res, next) => {
+  const { users_plant_id } = req.params;
+  const { password, planted_date } = req.body;
+
+  validateUsersPlantPassword({ users_plant_id, password })
+    .then(() => {
+      return updateUsersPlantById({ users_plant_id, planted_date });
+    })
+    .then(() => {
+      return selectUsersPlantById(users_plant_id);
+    })
+    .then((plant) => {
+      res.status(200).send({ plant });
     })
     .catch(next);
 };

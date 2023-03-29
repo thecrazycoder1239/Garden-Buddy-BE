@@ -476,6 +476,39 @@ describe("app", () => {
           });
       });
     });
+
+    describe("PATCH", () => {
+      it("200: updates planted_date on users_plant", () => {
+        return request(app)
+          .patch("/api/users-plants/3")
+          .send({
+            password: "password",
+            planted_date: "2022-12-12",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { plant } = body;
+
+            expect(plant).toMatchObject({
+              users_plant_id: 3,
+              planted_date: expect.any(String),
+              plant_id: 6,
+              username: "username",
+              tasks: [{}],
+            });
+          });
+      });
+
+      it("403: responses with forbidden when given invalid password", () => {
+        return request(app)
+          .patch("/api/users-plants/3")
+          .send({
+            password: "Password",
+            planted_date: "2022-12-12",
+          })
+          .expect(403);
+      });
+    });
   });
   describe("/users/:username/plants", () => {
     describe("POST", () => {

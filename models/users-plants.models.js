@@ -96,3 +96,14 @@ exports.removeUsersPlantById = (users_plant_id) => {
     [users_plant_id]
   );
 };
+
+exports.updateUsersPlantById = ({ users_plant_id, planted_date }) => {
+  return db.query(
+    `
+  UPDATE users_plants
+  SET planted_date = $1
+  WHERE users_plant_id = $2
+  `,
+    [planted_date, users_plant_id]
+  );
+};
