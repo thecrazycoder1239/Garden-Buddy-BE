@@ -28,10 +28,10 @@ exports.getUsersPlantById = (req, res, next) => {
 
   validateUsersPlantPassword({ users_plant_id, password })
     .then(() => {
-      return selectUsersPlantById(users_plant_id)
+      return selectUsersPlantById(users_plant_id);
     })
-    .then(plant => {
-      res.status(200).send({ plant })
+    .then((plant) => {
+      res.status(200).send({ plant });
     })
-    .catch(next)
-}
+    .catch(next);
+};

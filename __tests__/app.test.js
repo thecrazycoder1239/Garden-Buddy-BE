@@ -436,8 +436,8 @@ describe("app", () => {
           .send({
             password: "password",
           })
-          .expect(403)
-      })
+          .expect(403);
+      });
     });
   });
 });
