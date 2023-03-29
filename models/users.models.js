@@ -15,13 +15,10 @@ exports.validateUserPassword = ({ username, password }) => {
       if (!rows.length) {
         return Promise.reject({ msg: "user not found" });
       }
-
       if (!password) {
         return Promise.reject({ msg: "empty password field" });
       }
-
       const { hash } = rows[0];
-
       return bcrypt.compare(password, hash);
     })
     .then((result) => {
@@ -43,7 +40,6 @@ exports.insertUser = ({ username, first_name, last_name, password }) => {
   } else if (last_name.length > 50) {
     return Promise.reject({ msg: "last_name too long, maximum 50 characters" });
   }
-
   return bcrypt.hash(password, 10).then((hash) => {
     return db
       .query(
@@ -103,9 +99,6 @@ exports.insertPlantToUser = ({ username, plant_id, planted_date }) => {
       [username, plant_id, planted_date]
     )
     .then(({ rows }) => {
-      return {
-        ...rows[0],
-        tasks: [],
-      };
+      return Object.assign(Object.assign({}, rows[0]), { tasks: [] });
     });
 };

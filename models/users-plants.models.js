@@ -17,13 +17,10 @@ exports.validateUsersPlantPassword = ({ users_plant_id, password }) => {
       if (!rows.length) {
         return Promise.reject({ msg: "plant not found" });
       }
-
       if (!password) {
         return Promise.reject({ msg: "empty password field" });
       }
-
       const { hash } = rows[0];
-
       return bcrypt.compare(password, hash);
     })
     .then((result) => {

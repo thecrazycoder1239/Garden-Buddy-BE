@@ -1,5 +1,4 @@
 const db = require("./");
-
 exports.seed = (seedDataQuery) => {
   return db
     .query(
