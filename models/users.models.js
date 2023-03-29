@@ -1,5 +1,6 @@
 const db = require("../db/");
 const bcrypt = require("bcrypt");
+const { validatePasswordFromRows } = require("../utils/cypto");
 
 //validateUserPassword handles 404 for non-existent users and 400 for empty password field
 exports.validateUserPassword = ({ username, password }) => {
@@ -12,19 +13,7 @@ exports.validateUserPassword = ({ username, password }) => {
       [username]
     )
     .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ msg: "user not found" });
-      }
-      if (!password) {
-        return Promise.reject({ msg: "empty password field" });
-      }
-      const { hash } = rows[0];
-      return bcrypt.compare(password, hash);
-    })
-    .then((result) => {
-      if (!result) {
-        return Promise.reject({ msg: "forbidden" });
-      }
+      return validatePasswordFromRows({ rows, password, resourceName: "user" })
     });
 };
 

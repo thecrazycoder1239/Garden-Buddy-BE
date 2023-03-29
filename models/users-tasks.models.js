@@ -1,5 +1,6 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
+const { validatePasswordFromRows } = require("../utils/cypto");
 
 exports.validateUsersTaskAndPassword = ({ users_task_id, password }) => {
   return db
@@ -15,22 +16,7 @@ exports.validateUsersTaskAndPassword = ({ users_task_id, password }) => {
       [users_task_id]
     )
     .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ msg: "users_task not found" });
-      }
-
-      if (!password) {
-        return Promise.reject({ msg: "empty password field" });
-      }
-
-      const { hash } = rows[0];
-
-      return bcrypt.compare(password, hash);
-    })
-    .then((result) => {
-      if (!result) {
-        return Promise.reject({ msg: "forbidden" });
-      }
+     return validatePasswordFromRows({ rows, password, resourceName: "users_task" })
     });
 };
 

@@ -1,5 +1,6 @@
 const db = require("../db/");
 const bcrypt = require("bcrypt");
+const { validatePasswordFromRows } = require("../utils/cypto");
 
 exports.validateUsersPlantPassword = ({ users_plant_id, password }) => {
   return db
@@ -14,19 +15,7 @@ exports.validateUsersPlantPassword = ({ users_plant_id, password }) => {
       [users_plant_id]
     )
     .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ msg: "plant not found" });
-      }
-      if (!password) {
-        return Promise.reject({ msg: "empty password field" });
-      }
-      const { hash } = rows[0];
-      return bcrypt.compare(password, hash);
-    })
-    .then((result) => {
-      if (!result) {
-        return Promise.reject({ msg: "forbidden" });
-      }
+      return validatePasswordFromRows({ rows, password, resourceName: "users_plant" })
     });
 };
 

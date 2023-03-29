@@ -316,7 +316,7 @@ describe("app", () => {
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("plant not found");
+            expect(msg).toBe("users_plant not found");
           });
       });
 
