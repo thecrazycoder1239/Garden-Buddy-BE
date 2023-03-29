@@ -4,14 +4,14 @@ const {
   handlePSQLerrors,
   handleCustomErrors,
 } = require("./controllers/error-handler");
-const compositeHandler = require("./controllers/composite-handler")
+const apiRouter = require("./routers/apiRouter");
+const compositeHandler = require("./controllers/composite-handler");
 
 app.use(express.json());
 
-const apiRouter = require("./routers/apiRouter");
-
 app.use("/api", apiRouter);
-app.post("/composite", compositeHandler)
+
+app.post("/composite", compositeHandler);
 
 app.use(handlePSQLerrors);
 app.use(handleCustomErrors);
