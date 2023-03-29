@@ -43,7 +43,7 @@ exports.deleteUserByUsername = (req, res, next) => {
 exports.postPlantToUser = (req, res, next) => {
   const { username } = req.params;
   const { password, plant_id, planted_date } = req.body;
-  
+
   validateUserPassword({ username, password })
     .then(() => {
       return insertPlantToUser({ username, plant_id, planted_date });
