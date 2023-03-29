@@ -51,7 +51,7 @@ exports.seed = (seedDataQuery) => {
       CREATE TABLE subscriptions(
         username VARCHAR(30) REFERENCES users(username) ON DELETE CASCADE  NOT NULL,
         push_subscription JSON,
-        push_endpoint TEXT
+        push_endpoint TEXT PRIMARY KEY
       );
     `);
     })

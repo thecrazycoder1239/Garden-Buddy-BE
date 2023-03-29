@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const { 
+  addSubscription,
+  removeSubscription,
+ } = require("./controllers/push-subscription.controllers");
 const {
   handlePSQLerrors,
   handleCustomErrors,
@@ -12,6 +16,9 @@ app.use(express.json());
 const apiRouter = require("./routers/apiRouter");
 
 app.use("/api", apiRouter);
+
+app.post("/add-subscription", addSubscription)
+app.post("/remove-subscription", removeSubscription)
 
 app.use(handlePSQLerrors);
 app.use(handleCustomErrors);
