@@ -105,12 +105,14 @@ exports.insertPlantToUser = ({ username, plant_id, planted_date }) => {
 
 exports.selectUsersPlantsByUsername = (username) => {
   return db
-  .query(`
+    .query(
+      `
   SELECT * FROM users_plants
   WHERE username = $1
-  `, [username]
-  )
-  .then(({rows}) => {
-    return rows
-  })
-}
+  `,
+      [username]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};

@@ -4,7 +4,7 @@ const {
   removeUserByUsername,
   validateUserPassword,
   insertPlantToUser,
-  selectUsersPlantsByUsername
+  selectUsersPlantsByUsername,
 } = require("../models/users.models");
 
 exports.postUser = (req, res, next) => {
@@ -56,14 +56,14 @@ exports.postPlantToUser = (req, res, next) => {
 };
 
 exports.getUsersPlantsByUsername = (req, res, next) => {
-  const {username} = req.params;
-  const {password} = req.body;
-  validateUserPassword({username, password})
-  .then(() => {
-    return selectUsersPlantsByUsername(username)
-  })
-  .then((plants) => {
-    res.status(200).send({plants})
-  })
-  .catch(next);
+  const { username } = req.params;
+  const { password } = req.body;
+  validateUserPassword({ username, password })
+    .then(() => {
+      return selectUsersPlantsByUsername(username);
+    })
+    .then((plants) => {
+      res.status(200).send({ plants });
+    })
+    .catch(next);
 };

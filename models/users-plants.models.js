@@ -50,3 +50,39 @@ exports.insertTaskIntoUsersPlantsTasks = ({
       return rows[0];
     });
 };
+
+exports.selectUsersPlantById = (users_plant_id) => {
+  return db
+    .query(
+      `
+  SELECT * FROM users_plants
+  LEFT OUTER JOIN users_plants_tasks
+    ON users_plants.users_plant_id = users_plants_tasks.users_plant_id
+  WHERE users_plants.users_plant_id = $1
+  ORDER BY users_task_id
+  `,
+      [users_plant_id]
+    )
+    .then(({ rows }) => {
+      const tasks = [];
+
+      rows.forEach((row) => {
+        if (row.users_task_id) {
+          tasks.push({
+            users_task_id: row.users_task_id,
+            users_plant_id: row.users_plant_id,
+            task_slug: row.task_slug,
+            task_start_date: row.task_start_date,
+          });
+        }
+      });
+
+      return {
+        users_plant_id: +users_plant_id,
+        planted_date: rows[0].planted_date,
+        plant_id: rows[0].plant_id,
+        username: rows[0].username,
+        tasks,
+      };
+    });
+};

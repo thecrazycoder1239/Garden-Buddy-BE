@@ -1,5 +1,8 @@
-const { insertSubscription, deleteSubscription } = require('../models/push-subscription.models');
-const { validateUserPassword } = require('../models/users.models')
+const {
+  insertSubscription,
+  deleteSubscription,
+} = require("../models/push-subscription.models");
+const { validateUserPassword } = require("../models/users.models");
 
 exports.addSubscription = (req, res, next) => {
   const { body } = req;
@@ -8,20 +11,20 @@ exports.addSubscription = (req, res, next) => {
 
   validateUserPassword(user)
     .then(() => {
-      return insertSubscription({ username: user.username, pushSubscription })
+      return insertSubscription({ username: user.username, pushSubscription });
     })
     .then(() => {
-      res.sendStatus(200)
+      res.sendStatus(200);
     })
-    .catch(next)
-}
+    .catch(next);
+};
 
 exports.removeSubscription = (req, res, next) => {
   const { pushSubscription } = req.body;
 
   deleteSubscription({ pushSubscription })
     .then(() => {
-      res.sendStatus(200)
+      res.sendStatus(200);
     })
-    .catch(next)
-}
+    .catch(next);
+};
