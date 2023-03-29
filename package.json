@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/thecrazycoder1239/Garden-Buddy-BE#readme",
   "devDependencies": {
+    "@types/jest": "^29.5.0",
     "husky": "^8.0.0",
     "jest": "^29.5.0",
     "supertest": "^6.3.3"
