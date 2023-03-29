@@ -1,17 +1,17 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
 const {
   handlePSQLerrors,
   handleCustomErrors,
 } = require("./controllers/error-handler");
+const apiRouter = require("./routers/apiRouter");
+const compositeHandler = require("./controllers/composite-handler");
 
-app.use(cors());
 app.use(express.json());
 
-const apiRouter = require("./routers/apiRouter");
-
 app.use("/api", apiRouter);
+
+app.post("/composite", compositeHandler);
 
 app.use(handlePSQLerrors);
 app.use(handleCustomErrors);

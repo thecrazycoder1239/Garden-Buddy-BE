@@ -1,10 +1,10 @@
+const usersRouter = require("express").Router();
 const {
   postUser,
   getUserByUsername,
   deleteUserByUsername,
   postPlantToUser,
 } = require("../controllers/users.controllers");
-const usersRouter = require("express").Router();
 
 usersRouter.post("/", postUser);
 

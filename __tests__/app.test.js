@@ -327,15 +327,15 @@ describe("app", () => {
           .send({
             password: "password",
             task_slug: "not_a_task",
-            task_start_date: "2023-04-05"
+            task_start_date: "2023-04-05",
           })
           .expect(404)
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("task not found")
-          })
-      })
+            expect(msg).toBe("task not found");
+          });
+      });
 
       it("400: responds when date is not valid format", () => {
         return request(app)
@@ -343,15 +343,15 @@ describe("app", () => {
           .send({
             password: "password",
             task_slug: "water",
-            task_start_date: "not-a-valid-date"
+            task_start_date: "not-a-valid-date",
           })
           .expect(400)
           .then(({ body }) => {
             const { msg } = body;
 
-            expect(msg).toBe("Invalid date")
-          })
-      })
+            expect(msg).toBe("Invalid date");
+          });
+      });
     });
   });
   describe("/users/:username/plants", () => {
