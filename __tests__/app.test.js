@@ -34,7 +34,15 @@ beforeEach(() => {
     (2, 'water', '2023-05-02'),
     (2, 'water', '2023-05-03'),
     (2, 'fertilize', '2023-05-03'),
-    (3, 'water', '2023-04-01')
+    (3, 'water', '2023-04-01');
+
+  INSERT INTO users_plants_logs
+    (users_plant_id, body)
+  VALUES
+    (1, 'looking healthy'),
+    (1, 'looking unhealthy'),
+    (1, 'dire'),
+    (2, 'happy plant :)')
   `); //The hash is for the password 'password'
   // The password for any username is passsword + addedNumber
 });
@@ -813,6 +821,46 @@ describe("app", () => {
             body: "valid body",
           })
           .expect(403);
+      });
+    });
+  });
+
+  describe("/logs/:log_id", () => {
+    describe("DELETE", () => {
+      it("204: removes log from database", () => {
+        return request(app)
+          .delete("/api/logs/4")
+          .send({
+            password: "password2",
+          })
+          .expect(204)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_logs
+            WHERE log_id = 4
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(0);
+          });
+      });
+
+      it("403: responds with forbidden when provided incorrect password", () => {
+        return request(app)
+          .delete("/api/logs/1")
+          .send({
+            password: "password2",
+          })
+          .expect(403)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_logs
+            WHERE log_id = 1
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(1);
+          });
       });
     });
   });
