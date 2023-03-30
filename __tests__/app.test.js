@@ -781,4 +781,36 @@ describe("app", () => {
         .expect(403);
     });
   });
+
+  describe("/login", () => {
+    it("200: responds with users' info if given correct credentials", () => {
+      return request(app)
+        .post("/login")
+        .send({
+          username: "username2",
+          password: "password2",
+        })
+        .expect(200)
+        .then(({ body }) => {
+          const { user } = body;
+
+          expect(user).toMatchObject({
+            username: "username2",
+            password: "password2",
+            first_name: "user2",
+            last_name: "name2",
+          });
+        });
+    });
+
+    it("403: responds with forbidden if given incorrect credentials", () => {
+      return request(app)
+        .post("/login")
+        .send({
+          username: "username",
+          password: "wrong_password",
+        })
+        .expect(403);
+    });
+  });
 });

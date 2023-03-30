@@ -9,6 +9,7 @@ const {
   handlePSQLerrors,
   handleCustomErrors,
 } = require("./controllers/error-handler");
+const { handleLogin } = require("./controllers/login-handler");
 const apiRouter = require("./routers/apiRouter");
 const compositeHandler = require("./controllers/composite-handler");
 const growStuffRouter = require("./routers/growStuffRouter");
@@ -22,6 +23,8 @@ app.use("/growstuff", growStuffRouter);
 
 app.post("/add-subscription", addSubscription);
 app.post("/remove-subscription", removeSubscription);
+
+app.post("/login", handleLogin);
 
 app.post("/composite", compositeHandler);
 
