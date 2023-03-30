@@ -569,6 +569,76 @@ describe("app", () => {
           .expect(403);
       });
     });
+
+    describe("DELETE", () => {
+      it("204: removes the users_plant from the database", () => {
+        return request(app)
+          .delete("/api/users-plants/2")
+          .send({
+            password: "password2",
+          })
+          .expect(204)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants
+            WHERE users_plant_id = 2
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(0);
+          });
+      });
+      it("403: responds with forbidden when given invalid password in body", () => {
+        return request(app)
+          .delete("/api/users-plants/2")
+          .send({
+            password: "wrong_password",
+          })
+          .expect(403)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants
+            WHERE users_plant_id = 2
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(1);
+          });
+      });
+    });
+
+    describe("PATCH", () => {
+      it("200: updates planted_date on users_plant", () => {
+        return request(app)
+          .patch("/api/users-plants/3")
+          .send({
+            password: "password",
+            planted_date: "2022-12-12",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { plant } = body;
+
+            expect(plant).toMatchObject({
+              users_plant_id: 3,
+              planted_date: expect.any(String),
+              plant_id: 6,
+              username: "username",
+              tasks: [{}],
+            });
+          });
+      });
+
+      it("403: responses with forbidden when given invalid password", () => {
+        return request(app)
+          .patch("/api/users-plants/3")
+          .send({
+            password: "Password",
+            planted_date: "2022-12-12",
+          })
+          .expect(403);
+      });
+    });
   });
   describe("/users/:username/plants", () => {
     describe("POST", () => {
