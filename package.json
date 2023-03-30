@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "psql -f db/setup-db.sql && jest",
+    "start": "node listen.js",
+    "seed-prod": "NODE_ENV=production node db/prod-seed.js",
     "prepare": "husky install"
   },
   "repository": {
