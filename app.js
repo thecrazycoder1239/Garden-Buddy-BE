@@ -24,7 +24,7 @@ app.use("/growstuff", growStuffRouter);
 app.post("/add-subscription", addSubscription);
 app.post("/remove-subscription", removeSubscription);
 
-app.post("/login", handleLogin)
+app.post("/login", handleLogin);
 
 app.post("/composite", compositeHandler);
 

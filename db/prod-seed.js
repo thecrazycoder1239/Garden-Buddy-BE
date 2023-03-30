@@ -9,4 +9,4 @@ VALUES
   ('look for bugs', 'not all bugs are bad though!'),
   ('health check', 'look out for signs of disease'),
   ('harvest', 'enjoy your garden''s bounty')
-`)
+`);

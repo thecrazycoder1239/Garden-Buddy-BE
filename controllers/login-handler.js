@@ -1,19 +1,22 @@
-const { validateUserPassword, selectUserByUsername } = require("../models/users.models");
+const {
+  validateUserPassword,
+  selectUserByUsername,
+} = require("../models/users.models");
 
 exports.handleLogin = (req, res, next) => {
   const { username, password } = req.body;
-  
-  validateUserPassword({username, password})
+
+  validateUserPassword({ username, password })
     .then(() => {
-      return selectUserByUsername(username)
+      return selectUserByUsername(username);
     })
-    .then(user => {
+    .then((user) => {
       res.status(200).send({
         user: {
           ...user,
-          password
-        }
-      })
+          password,
+        },
+      });
     })
-    .catch(next)
-}
+    .catch(next);
+};

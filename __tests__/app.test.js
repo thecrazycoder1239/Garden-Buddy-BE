@@ -788,7 +788,7 @@ describe("app", () => {
         .post("/login")
         .send({
           username: "username2",
-          password: "password2"
+          password: "password2",
         })
         .expect(200)
         .then(({ body }) => {
@@ -799,18 +799,18 @@ describe("app", () => {
             password: "password2",
             first_name: "user2",
             last_name: "name2",
-          })
-        })
-    })
+          });
+        });
+    });
 
-    it('403: responds with forbidden if given incorrect credentials', () => {
+    it("403: responds with forbidden if given incorrect credentials", () => {
       return request(app)
         .post("/login")
         .send({
           username: "username",
-          password: "wrong_password"
+          password: "wrong_password",
         })
-        .expect(403)
-    })
-  })
+        .expect(403);
+    });
+  });
 });
