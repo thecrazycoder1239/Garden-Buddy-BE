@@ -768,6 +768,55 @@ describe("app", () => {
       });
     });
   });
+
+  describe("/users-plants/:users_plant_id/logs", () => {
+    describe("POST", () => {
+      it("201: creates a new log for the plant", () => {
+        return request(app)
+          .post("/api/users-plants/1/logs")
+          .send({
+            password: "password",
+            body: "Test log",
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const { log } = body;
+
+            expect(log).toMatchObject({
+              users_plant_id: 1,
+              log_date: expect.any(String),
+              log_id: expect.any(Number),
+              body: "Test log",
+            });
+          });
+      });
+
+      it("400: responds when body field is empty", () => {
+        return request(app)
+          .post("/api/users-plants/2/logs")
+          .send({
+            password: "password2",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("Missing required field");
+          });
+      });
+
+      it("403: responds with forbidden when password is invalid", () => {
+        return request(app)
+          .post("/api/users-plants/2/logs")
+          .send({
+            password: "invalid",
+            body: "valid body",
+          })
+          .expect(403);
+      });
+    });
+  });
+
   describe("/add-subscription", () => {
     it("403: does not authorise creating a subscription for a user with incorrect credentials", () => {
       return request(app)

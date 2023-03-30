@@ -100,3 +100,20 @@ exports.updateUsersPlantById = ({ users_plant_id, planted_date }) => {
     [planted_date, users_plant_id]
   );
 };
+
+exports.insertLogIntoUsersPlantsLogs = ({ users_plant_id, body }) => {
+  return db
+    .query(
+      `
+  INSERT INTO users_plants_logs
+    (users_plant_id, body)
+  VALUES
+    ($1, $2)
+  RETURNING *
+  `,
+      [users_plant_id, body]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
