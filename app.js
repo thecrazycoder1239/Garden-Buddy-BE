@@ -11,12 +11,14 @@ const {
 } = require("./controllers/error-handler");
 const apiRouter = require("./routers/apiRouter");
 const compositeHandler = require("./controllers/composite-handler");
+const growStuffRouter = require("./routers/growStuffRouter");
 
 app.use(cors());
 
 app.use(express.json());
 
 app.use("/api", apiRouter);
+app.use("/growstuff", growStuffRouter);
 
 app.post("/add-subscription", addSubscription);
 app.post("/remove-subscription", removeSubscription);
