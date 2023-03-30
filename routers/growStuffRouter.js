@@ -6,6 +6,6 @@ const growStuffRouter = require('express').Router();
 
 growStuffRouter.get('/:category', getGrowStuffJSON)
 
-growStuffRouter.get('/:category/:id', getGrowStuffJSON)
+growStuffRouter.get('/:category/:id_or_search', getGrowStuffJSON)
 
 module.exports = growStuffRouter;
