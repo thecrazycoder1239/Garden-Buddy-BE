@@ -48,24 +48,44 @@ exports.selectUsersPlantById = (users_plant_id) => {
   return db
     .query(
       `
-  SELECT * FROM users_plants
+  SELECT users_plants.users_plant_id, planted_date, plant_id, username,
+    users_task_id, task_slug, task_start_date,
+    NULL AS log_id, NULL AS body, NULL AS log_date
+  FROM users_plants
   LEFT OUTER JOIN users_plants_tasks
     ON users_plants.users_plant_id = users_plants_tasks.users_plant_id
   WHERE users_plants.users_plant_id = $1
-  ORDER BY users_task_id
+  UNION
+  SELECT users_plants.users_plant_id, planted_date, plant_id, username,
+    NULL AS users_task_id, NULL AS task_slug, NULL AS task_start_date,
+    log_id, body, log_date
+  FROM users_plants
+  LEFT OUTER JOIN users_plants_logs
+    ON users_plants.users_plant_id = users_plants_logs.users_plant_id
+  WHERE users_plants.users_plant_id = $1
+  ORDER BY users_task_id, log_id
   `,
       [users_plant_id]
     )
     .then(({ rows }) => {
       const tasks = [];
+      const logs = [];
 
       rows.forEach((row) => {
+        //These conditions are mutually exclusive due to the above query
         if (row.users_task_id) {
           tasks.push({
             users_task_id: row.users_task_id,
             users_plant_id: row.users_plant_id,
             task_slug: row.task_slug,
             task_start_date: row.task_start_date,
+          });
+        } else if (row.log_id) {
+          logs.push({
+            log_id: row.log_id,
+            body: row.body,
+            users_plant_id: row.users_plant_id,
+            log_date: row.log_date,
           });
         }
       });
@@ -76,6 +96,7 @@ exports.selectUsersPlantById = (users_plant_id) => {
         plant_id: rows[0].plant_id,
         username: rows[0].username,
         tasks,
+        logs,
       };
     });
 };

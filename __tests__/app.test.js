@@ -510,7 +510,7 @@ describe("app", () => {
 
   describe("/users-plants/:users_plant_id", () => {
     describe("GET", () => {
-      it("200: responds with tasks for users_plant", () => {
+      it("200: responds with tasks and logs for users_plant", () => {
         return request(app)
           .get("/api/users-plants/2")
           .send({
@@ -544,6 +544,14 @@ describe("app", () => {
                   task_start_date: expect.any(String),
                 },
               ],
+              logs: [
+                {
+                  users_plant_id: 2,
+                  body: "happy plant :)",
+                  log_date: expect.any(String),
+                  log_id: 4,
+                },
+              ],
             });
           });
       });
@@ -564,6 +572,25 @@ describe("app", () => {
               plant_id: 10,
               planted_date: expect.any(String),
               tasks: [],
+            });
+          });
+      });
+
+      it("200: responds with a plant even with no logs", () => {
+        return request(app)
+          .get("/api/users-plants/3")
+          .send({
+            password: "password",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { plant } = body;
+
+            expect(plant).toMatchObject({
+              users_plant_id: 3,
+              username: "username",
+              plant_id: 6,
+              logs: [],
             });
           });
       });
