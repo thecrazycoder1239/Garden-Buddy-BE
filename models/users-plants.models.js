@@ -86,3 +86,24 @@ exports.selectUsersPlantById = (users_plant_id) => {
       };
     });
 };
+
+exports.removeUsersPlantById = (users_plant_id) => {
+  return db.query(
+    `
+  DELETE FROM users_plants
+  WHERE users_plant_id = $1
+  `,
+    [users_plant_id]
+  );
+};
+
+exports.updateUsersPlantById = ({ users_plant_id, planted_date }) => {
+  return db.query(
+    `
+  UPDATE users_plants
+  SET planted_date = $1
+  WHERE users_plant_id = $2
+  `,
+    [planted_date, users_plant_id]
+  );
+};
