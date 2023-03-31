@@ -39,15 +39,16 @@ exports.checkNotifcations = () => {
           },
         });
 
-        try {
+        
           webpush.sendNotification(row.push_subscription, notification, options)
-        } catch {
-          db.query(`
-          DELETE FROM subscriptions
-          WHERE push_endpoint = $1
-          `, [row.push_subscription.endpoint])
-        }
-      
+            .catch((err) => {
+              console.error(err);
+
+              db.query(`
+              DELETE FROM subscriptions
+              WHERE push_endpoint = $1
+              `, [row.push_subscription.endpoint])
+            })
       });
     })
     .catch(console.error);
