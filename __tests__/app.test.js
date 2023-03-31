@@ -34,7 +34,15 @@ beforeEach(() => {
     (2, 'water', '2023-05-02'),
     (2, 'water', '2023-05-03'),
     (2, 'fertilize', '2023-05-03'),
-    (3, 'water', '2023-04-01')
+    (3, 'water', '2023-04-01');
+
+  INSERT INTO users_plants_logs
+    (users_plant_id, body)
+  VALUES
+    (1, 'looking healthy'),
+    (1, 'looking unhealthy'),
+    (1, 'dire'),
+    (2, 'happy plant :)')
   `); //The hash is for the password 'password'
   // The password for any username is passsword + addedNumber
 });
@@ -502,7 +510,7 @@ describe("app", () => {
 
   describe("/users-plants/:users_plant_id", () => {
     describe("GET", () => {
-      it("200: responds with tasks for users_plant", () => {
+      it("200: responds with tasks and logs for users_plant", () => {
         return request(app)
           .get("/api/users-plants/2")
           .send({
@@ -536,6 +544,14 @@ describe("app", () => {
                   task_start_date: expect.any(String),
                 },
               ],
+              logs: [
+                {
+                  users_plant_id: 2,
+                  body: "happy plant :)",
+                  log_date: expect.any(String),
+                  log_id: 4,
+                },
+              ],
             });
           });
       });
@@ -556,6 +572,25 @@ describe("app", () => {
               plant_id: 10,
               planted_date: expect.any(String),
               tasks: [],
+            });
+          });
+      });
+
+      it("200: responds with a plant even with no logs", () => {
+        return request(app)
+          .get("/api/users-plants/3")
+          .send({
+            password: "password",
+          })
+          .expect(200)
+          .then(({ body }) => {
+            const { plant } = body;
+
+            expect(plant).toMatchObject({
+              users_plant_id: 3,
+              username: "username",
+              plant_id: 6,
+              logs: [],
             });
           });
       });
@@ -768,6 +803,95 @@ describe("app", () => {
       });
     });
   });
+
+  describe("/users-plants/:users_plant_id/logs", () => {
+    describe("POST", () => {
+      it("201: creates a new log for the plant", () => {
+        return request(app)
+          .post("/api/users-plants/1/logs")
+          .send({
+            password: "password",
+            body: "Test log",
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const { log } = body;
+
+            expect(log).toMatchObject({
+              users_plant_id: 1,
+              log_date: expect.any(String),
+              log_id: expect.any(Number),
+              body: "Test log",
+            });
+          });
+      });
+
+      it("400: responds when body field is empty", () => {
+        return request(app)
+          .post("/api/users-plants/2/logs")
+          .send({
+            password: "password2",
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+
+            expect(msg).toBe("Missing required field");
+          });
+      });
+
+      it("403: responds with forbidden when password is invalid", () => {
+        return request(app)
+          .post("/api/users-plants/2/logs")
+          .send({
+            password: "invalid",
+            body: "valid body",
+          })
+          .expect(403);
+      });
+    });
+  });
+
+  describe("/logs/:log_id", () => {
+    describe("DELETE", () => {
+      it("204: removes log from database", () => {
+        return request(app)
+          .delete("/api/logs/4")
+          .send({
+            password: "password2",
+          })
+          .expect(204)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_logs
+            WHERE log_id = 4
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(0);
+          });
+      });
+
+      it("403: responds with forbidden when provided incorrect password", () => {
+        return request(app)
+          .delete("/api/logs/1")
+          .send({
+            password: "password2",
+          })
+          .expect(403)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users_plants_logs
+            WHERE log_id = 1
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows).toHaveLength(1);
+          });
+      });
+    });
+  });
+
   describe("/add-subscription", () => {
     it("403: does not authorise creating a subscription for a user with incorrect credentials", () => {
       return request(app)

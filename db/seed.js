@@ -5,6 +5,7 @@ exports.seed = (seedDataQuery) => {
       `
     DROP TABLE IF EXISTS subscriptions;
     DROP TABLE IF EXISTS plant_reviews;
+    DROP TABLE IF EXISTS users_plants_logs;
     DROP TABLE IF EXISTS users_plants_tasks;
     DROP TABLE IF EXISTS users_plants;
     DROP TABLE IF EXISTS tasks;
@@ -38,6 +39,13 @@ exports.seed = (seedDataQuery) => {
         task_slug VARCHAR(25) REFERENCES tasks(task_slug) ON DELETE CASCADE  NOT NULL,
         task_start_date TIMESTAMP NOT NULL,
         notified BOOLEAN DEFAULT 'false'
+      );
+
+      CREATE TABLE users_plants_logs(
+        log_id SERIAL PRIMARY KEY,
+        users_plant_id INT REFERENCES users_plants(users_plant_id) ON DELETE CASCADE NOT NULL,
+        log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+        body TEXT NOT NULL
       );
 
       CREATE TABLE plant_reviews(
