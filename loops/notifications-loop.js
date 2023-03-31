@@ -30,8 +30,6 @@ exports.checkNotifcations = () => {
   `)
   .then(({ rows }) => {
 
-    console.log("Query works")
-
     rows.forEach(row => {
       const notification = JSON.stringify({
         title: `${row.task_slug} reminder for one of your plants`,
@@ -41,6 +39,7 @@ exports.checkNotifcations = () => {
       })
 
       try {
+        console.log("notified")
         webpush(row.push_subscription, notification, options)
       } catch {
         db.query(`
