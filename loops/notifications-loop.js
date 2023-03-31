@@ -39,7 +39,7 @@ exports.checkNotifcations = () => {
           },
         });
 
-        webpush(row.push_subscription, notification, options)
+        webpush.sendNotification(row.push_subscription, notification, options)
           .then(console.log)
           .catch((err) => {
             console.error(err);
