@@ -37,7 +37,7 @@ exports.seed = (seedDataQuery) => {
         users_plant_id INT REFERENCES users_plants(users_plant_id) ON DELETE CASCADE NOT NULL,
         task_slug VARCHAR(25) REFERENCES tasks(task_slug) ON DELETE CASCADE  NOT NULL,
         task_start_date TIMESTAMP NOT NULL,
-        notified BOOLEAN DEFAULT false
+        notified BOOLEAN DEFAULT 'false'
       );
 
       CREATE TABLE plant_reviews(

@@ -1,19 +1,20 @@
-const db = require("../db")
-const webpush = require("web-push")
+const db = require("../db");
+const webpush = require("web-push");
 
 const vapidDetails = {
   publicKey: process.env.VAPID_PUBLIC_KEY,
   privateKey: process.env.VAPID_PRIVATE_KEY,
-  subject: process.env.VAPID_SUBJECT
-}
+  subject: process.env.VAPID_SUBJECT,
+};
 
 const options = {
-  TTL: 1000,
-  vapidDetails
-}
+  TTL: 10000,
+  vapidDetails,
+};
 
 exports.checkNotifcations = () => {
-  db.query(`
+  db.query(
+    `
   UPDATE users_plants_tasks
   SET notified = true
   FROM users_plants
@@ -27,27 +28,30 @@ exports.checkNotifcations = () => {
     AND users_plants_tasks.users_plant_id = users_plants.users_plant_id
     AND users_plants_tasks.task_slug = tasks.task_slug
   RETURNING push_subscription, tasks.task_slug, description
-  `)
-  .then(({ rows }) => {
+  `
+  )
+    .then(({ rows }) => {
+      rows.forEach((row) => {
+        const notification = JSON.stringify({
+          title: `${row.task_slug} reminder for one of your plants`,
+          options: {
+            body: row.description,
+          },
+        });
 
-    rows.forEach(row => {
-      const notification = JSON.stringify({
-        title: `${row.task_slug} reminder for one of your plants`,
-        options: {
-          body: row.description
-        }
-      })
-
-      try {
-        console.log("notified")
         webpush(row.push_subscription, notification, options)
-      } catch {
-        db.query(`
-        DELETE FROM subscriptions
-        WHERE push_endpoint = $1
-        `, [row.push_endpoint])
-      }
+          .then(console.log)
+          .catch((err) => {
+            console.error(err);
+            db.query(
+              `
+              DELETE FROM subscriptions
+              WHERE push_endpoint = $1
+              `,
+              [row.push_endpoint]
+            );
+          });
+      });
     })
-  })
-  .catch(console.error)
-}
+    .catch(console.error);
+};
