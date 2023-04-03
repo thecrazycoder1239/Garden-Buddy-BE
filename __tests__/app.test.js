@@ -236,8 +236,7 @@ describe("app", () => {
             first_name: 'hector',
             password: "password1"
           })
-          .then((response) => {
-            console.log(response)
+          .then(() => {
             return db.query(`
             SELECT * FROM users
             WHERE username = 'username'
