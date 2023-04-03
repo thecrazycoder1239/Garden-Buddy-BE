@@ -77,18 +77,15 @@ exports.patchUserFirstName = (req, res, next) => {
   validateUserPassword({ username, password })
     .then(() => {
       if (first_name !== undefined) {
-        updateUserFirstName(username, first_name)
-          .then((user) => {
-            res.status(201).send({ first_name: user.first_name });
-          })
-          .catch(next);
+        return updateUserFirstName(username, first_name);
       } else if (last_name !== undefined) {
-        updateUserLastName(username, last_name)
-          .then((user) => {
-            res.status(201).send({ last_name: user.last_name });
-          })
-          .catch(next);
+        return updateUserLastName(username, last_name)
+      } else {
+        res.status(400).send({ msg: "bad request" });
       }
+    })
+    .then((user) => {
+      res.status(201).send(user);
     })
     .catch(next);
 };
