@@ -202,7 +202,8 @@ describe("app", () => {
         return request(app)
           .patch("/api/users/username")
           .send({
-            first_name: "lol"
+            first_name: "lol",
+            password: "password"
           })
           .expect(201)
           .then(({body}) => {
@@ -216,13 +217,34 @@ describe("app", () => {
         return request(app)
           .patch("/api/users/username")
           .send({
-            last_name: "lol"
+            last_name: "lol",
+            password: "password"
           })
           .expect(201)
           .then(({body}) => {
             expect(body).toMatchObject({
               last_name: "lol"
             });
+          });
+      });
+
+      it("403: returns forbidden when incorrect password is provided to patch", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .expect(403)
+          .send({
+            first_name: 'hector',
+            password: "password1"
+          })
+          .then((response) => {
+            console.log(response)
+            return db.query(`
+            SELECT * FROM users
+            WHERE username = 'username'
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows[0].first_name).toBe('user');
           });
       });
     });
