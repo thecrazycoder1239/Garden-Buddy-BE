@@ -42,7 +42,7 @@ beforeEach(() => {
     (1, 'looking healthy'),
     (1, 'looking unhealthy'),
     (1, 'dire'),
-    (2, 'happy plant :)')
+    (2, 'happy plant :)');
   `); //The hash is for the password 'password'
   // The password for any username is passsword + addedNumber
 });
@@ -195,6 +195,34 @@ describe("app", () => {
             const { msg } = body;
 
             expect(msg).toBe("user not found");
+          });
+      });
+
+      it("201: responds with the patched first name", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            first_name: "lol"
+          })
+          .expect(201)
+          .then(({body}) => {
+            expect(body).toMatchObject({
+              first_name: "lol"
+            });
+          });
+      });
+
+      it("201: responds with the patched last name", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            last_name: "lol"
+          })
+          .expect(201)
+          .then(({body}) => {
+            expect(body).toMatchObject({
+              last_name: "lol"
+            });
           });
       });
     });
