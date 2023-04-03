@@ -509,10 +509,10 @@ describe("app", () => {
   });
 
   describe("/users-plants/:users_plant_id", () => {
-    describe("GET", () => {
+    describe("POST with /access", () => {
       it("200: responds with tasks and logs for users_plant", () => {
         return request(app)
-          .get("/api/users-plants/2")
+          .post("/api/users-plants/2/access")
           .send({
             password: "password2",
           })
@@ -558,7 +558,7 @@ describe("app", () => {
 
       it("200: responds with a plant even with no tasks", () => {
         return request(app)
-          .get("/api/users-plants/1")
+          .post("/api/users-plants/1/access")
           .send({
             password: "password",
           })
@@ -578,7 +578,7 @@ describe("app", () => {
 
       it("200: responds with a plant even with no logs", () => {
         return request(app)
-          .get("/api/users-plants/3")
+          .post("/api/users-plants/3/access")
           .send({
             password: "password",
           })
@@ -597,7 +597,7 @@ describe("app", () => {
 
       it("403: responds with forbidden if given invalid password", () => {
         return request(app)
-          .get("/api/users-plants/2")
+          .post("/api/users-plants/2/access")
           .send({
             password: "password",
           })
@@ -768,10 +768,10 @@ describe("app", () => {
           });
       });
     });
-    describe("GET", () => {
+    describe("POST with /access", () => {
       it("200: returns list of all plants for a single user ", () => {
         return request(app)
-          .get("/api/users/username/plants")
+          .post("/api/users/username/plants/access")
           .send({ password: "password" })
           .expect(200)
           .then(({ body }) => {
@@ -797,7 +797,7 @@ describe("app", () => {
 
       it("403: returns forbidden when incorrect password is provided for user", () => {
         return request(app)
-          .get("/api/users/username/plants")
+          .post("/api/users/username/plants/access")
           .send({ password: "passwordd" })
           .expect(403);
       });
