@@ -13,8 +13,9 @@ usersPlantsRouter.post("/:users_plant_id/logs", postLogToUsersPlantsLogs);
 
 usersPlantsRouter
   .route("/:users_plant_id")
-  .get(getUsersPlantById)
   .delete(deleteUsersPlantById)
   .patch(patchUsersPlantById);
+
+usersPlantsRouter.post("/:users_plant_id/access", getUsersPlantById)
 
 module.exports = usersPlantsRouter;

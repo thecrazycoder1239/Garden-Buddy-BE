@@ -14,9 +14,8 @@ usersRouter
   .get(getUserByUsername)
   .delete(deleteUserByUsername);
 
-usersRouter
-  .route("/:username/plants")
-  .post(postPlantToUser)
-  .get(getUsersPlantsByUsername);
+usersRouter.post("/:username/plants", postPlantToUser);
+
+usersRouter.post("/:username/plants/access",getUsersPlantsByUsername)
 
 module.exports = usersRouter;
