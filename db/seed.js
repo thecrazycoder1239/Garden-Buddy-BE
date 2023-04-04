@@ -8,6 +8,7 @@ exports.seed = (seedDataQuery) => {
     DROP TABLE IF EXISTS users_plants_logs;
     DROP TABLE IF EXISTS users_plants_tasks;
     DROP TABLE IF EXISTS users_plants;
+    DROP TABLE IF EXISTS growstuff_cache;
     DROP TABLE IF EXISTS tasks;
     DROP TABLE IF EXISTS users;
   `
@@ -19,11 +20,17 @@ exports.seed = (seedDataQuery) => {
         first_name VARCHAR(30) NOT NULL,
         last_name VARCHAR(50) NOT NULL,
         hash VARCHAR(64) NOT NULL
-      );
-
+        );
+        
       CREATE TABLE tasks(
         task_slug VARCHAR(25) PRIMARY KEY,
         description TEXT
+      );
+
+      CREATE TABLE growstuff_cache(
+        plant_id INT PRIMARY KEY,
+        name VARCHAR(80),
+        thumbnail_url TEXT
       );
 
       CREATE TABLE users_plants(
@@ -61,6 +68,7 @@ exports.seed = (seedDataQuery) => {
         push_subscription JSON,
         push_endpoint TEXT PRIMARY KEY
       );
+
     `);
     })
     .then(() => {

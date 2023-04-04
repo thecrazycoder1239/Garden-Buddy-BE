@@ -1,3 +1,4 @@
+const { combineUsersPlantWithGrowstuffData } = require("../models/grow-stuff.models");
 const {
   insertUser,
   selectUserByUsername,
@@ -52,6 +53,9 @@ exports.postPlantToUser = (req, res, next) => {
       return insertPlantToUser({ username, plant_id, planted_date });
     })
     .then((plant) => {
+      return combineUsersPlantWithGrowstuffData(plant)
+    })
+    .then((plant) => {
       res.status(201).send({ plant: plant });
     })
     .catch(next);
@@ -63,6 +67,11 @@ exports.getUsersPlantsByUsername = (req, res, next) => {
   validateUserPassword({ username, password })
     .then(() => {
       return selectUsersPlantsByUsername(username);
+    })
+    .then((plants) => {
+      return Promise.all(
+        plants.map(combineUsersPlantWithGrowstuffData)
+      )
     })
     .then((plants) => {
       res.status(200).send({ plants });
