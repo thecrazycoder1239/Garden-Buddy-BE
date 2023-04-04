@@ -21,12 +21,12 @@ beforeEach(() => {
   INSERT INTO users_plants
     (username, plant_id, planted_date)
   VALUES
-    ('username', 10, '2023-03-29'),
-    ('username2', 4, NULL),
-    ('username', 6, NULL),
-    ('username', 1, NULL),
+    ('username', 113, '2023-03-29'),
+    ('username2', 216, NULL),
+    ('username', 218, NULL),
+    ('username', 216, NULL),
     ('username2', 10, NULL),
-    ('username', 10, '2022-03-29');
+    ('username', 38, '2022-03-29');
 
   INSERT INTO users_plants_tasks
     (users_plant_id, task_slug, task_start_date)
@@ -43,7 +43,19 @@ beforeEach(() => {
     (1, 'looking unhealthy'),
     (1, 'dire'),
     (2, 'happy plant :)');
-  `); //The hash is for the password 'password'
+  `
+  // + `
+  // INSERT INTO growstuff_cache
+  //   (plant_id, name, thumbnail_url)
+  // VALUES
+  //   (216, 'tomato', 'url'),
+  //   (218, 'turnip', 'url'),
+  //   (113, 'lettuce', 'url'),
+  //   (37, 'carrot', 'url'),
+  //   (38, 'cassava', 'url')
+  // `
+  // Note that if the tests are faster with above logic then the cache first startegy works
+  ); //The hash is for the password 'password'
   // The password for any username is passsword + addedNumber
 });
 
@@ -600,7 +612,9 @@ describe("app", () => {
             expect(plant).toMatchObject({
               username: "username2",
               users_plant_id: 2,
-              plant_id: 4,
+              plant_id: 216,
+              name: "tomato",
+              thumbnail_url: expect.any(String),
               tasks: [
                 {
                   users_task_id: 1,
@@ -646,8 +660,10 @@ describe("app", () => {
             expect(plant).toMatchObject({
               users_plant_id: 1,
               username: "username",
-              plant_id: 10,
+              plant_id: 113,
               planted_date: expect.any(String),
+              name: "lettuce",
+              thumbnail_url: expect.any(String),
               tasks: [],
             });
           });
@@ -666,7 +682,9 @@ describe("app", () => {
             expect(plant).toMatchObject({
               users_plant_id: 3,
               username: "username",
-              plant_id: 6,
+              plant_id: 218,
+              name: "turnip",
+              thumbnail_url: expect.any(String),
               logs: [],
             });
           });
@@ -734,7 +752,7 @@ describe("app", () => {
             expect(plant).toMatchObject({
               users_plant_id: 3,
               planted_date: expect.any(String),
-              plant_id: 6,
+              plant_id: 218,
               username: "username",
               tasks: [{}],
             });
@@ -759,14 +777,16 @@ describe("app", () => {
           .post("/api/users/username/plants")
           .send({
             password: "password",
-            plant_id: 7,
+            plant_id: 37,
             planted_date: "2023-04-01",
           })
           .expect(201)
           .then(({ body }) => {
             const { plant } = body;
             expect(plant).toMatchObject({
-              plant_id: 7,
+              plant_id: 37,
+              name: "carrot",
+              thumbnail_url: expect.any(String),
               users_plant_id: expect.any(Number),
               username: "username",
               planted_date: expect.any(String),
@@ -856,17 +876,21 @@ describe("app", () => {
             expect(plants).toMatchObject([
               {
                 username: "username",
-                plant_id: 10,
+                plant_id: 113,
+                name: "lettuce",
+                thumbnail_url: expect.any(String),
                 users_plant_id: 1,
                 planted_date: expect.any(String),
               },
-              { username: "username", plant_id: 6, users_plant_id: 3 },
-              { username: "username", plant_id: 1, users_plant_id: 4 },
+              { username: "username", plant_id: 218, users_plant_id: 3, name:"turnip", thumbnail_url: expect.any(String)},
+              { username: "username", plant_id: 216, users_plant_id: 4, name: "tomato", thumbnail_url: expect.any(String) },
               {
                 username: "username",
-                plant_id: 10,
+                plant_id: 38,
                 users_plant_id: 6,
                 planted_date: expect.any(String),
+                name: "cassava",
+                thumbnail_url: expect.any(String)
               },
             ]);
           });

@@ -1,3 +1,4 @@
+const { combineUsersPlantWithGrowstuffData } = require("../models/grow-stuff.models");
 const {
   insertTaskIntoUsersPlantsTasks,
   validateUsersPlantPassword,
@@ -34,6 +35,9 @@ exports.getUsersPlantById = (req, res, next) => {
       return selectUsersPlantById(users_plant_id);
     })
     .then((plant) => {
+      return combineUsersPlantWithGrowstuffData(plant)
+    })
+    .then((plant) => {
       res.status(200).send({ plant });
     })
     .catch(next);
@@ -63,6 +67,9 @@ exports.patchUsersPlantById = (req, res, next) => {
     })
     .then(() => {
       return selectUsersPlantById(users_plant_id);
+    })
+    .then((plant) => {
+      return combineUsersPlantWithGrowstuffData(plant);
     })
     .then((plant) => {
       res.status(200).send({ plant });
