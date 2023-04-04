@@ -42,7 +42,7 @@ beforeEach(() => {
     (1, 'looking healthy'),
     (1, 'looking unhealthy'),
     (1, 'dire'),
-    (2, 'happy plant :)')
+    (2, 'happy plant :)');
   `); //The hash is for the password 'password'
   // The password for any username is passsword + addedNumber
 });
@@ -195,6 +195,83 @@ describe("app", () => {
             const { msg } = body;
 
             expect(msg).toBe("user not found");
+          });
+      });
+
+      it("201: responds with the patched first name", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            first_name: "lol",
+            password: "password"
+          })
+          .expect(201)
+          .then(({body}) => {
+            expect(body).toMatchObject({
+              first_name: "lol"
+            });
+          });
+      });
+
+      it("201: responds with the patched last name", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            last_name: "lol",
+            password: "password"
+          })
+          .expect(201)
+          .then(({body}) => {
+            expect(body).toMatchObject({
+              last_name: "lol"
+            });
+          });
+      });
+
+      it("403: returns forbidden when incorrect password is provided to patch", () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            first_name: 'hector',
+            password: "password1"
+          })
+          .expect(403)
+          .then(() => {
+            return db.query(`
+            SELECT * FROM users
+            WHERE username = 'username'
+            `);
+          })
+          .then(({ rows }) => {
+            expect(rows[0].first_name).toBe('user');
+          });
+      });
+
+      it('404: returns 404 when user is not found', () => {
+        return request(app)
+          .patch("/api/users/usernam")
+          .send({
+            last_name: "lol",
+            password: "password"
+          })
+          .expect(404)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("user not found");
+          });
+      });
+
+      it('400: returns 400 when neither first name or last name are properties on the request body', () => {
+        return request(app)
+          .patch("/api/users/username")
+          .send({
+            last_na: "lol",
+            password: "password"
+          })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            expect(msg).toBe("bad request");
           });
       });
     });

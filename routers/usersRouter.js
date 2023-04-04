@@ -5,6 +5,7 @@ const {
   deleteUserByUsername,
   postPlantToUser,
   getUsersPlantsByUsername,
+  patchUserFirstName
 } = require("../controllers/users.controllers");
 
 usersRouter.post("/", postUser);
@@ -17,5 +18,7 @@ usersRouter
 usersRouter.post("/:username/plants", postPlantToUser);
 
 usersRouter.post("/:username/plants/access",getUsersPlantsByUsername)
+
+usersRouter.patch("/:username", patchUserFirstName)
 
 module.exports = usersRouter;

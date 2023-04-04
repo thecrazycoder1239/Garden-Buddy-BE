@@ -5,6 +5,8 @@ const {
   validateUserPassword,
   insertPlantToUser,
   selectUsersPlantsByUsername,
+  updateUserFirstName,
+  updateUserLastName,
 } = require("../models/users.models");
 
 exports.postUser = (req, res, next) => {
@@ -64,6 +66,26 @@ exports.getUsersPlantsByUsername = (req, res, next) => {
     })
     .then((plants) => {
       res.status(200).send({ plants });
+    })
+    .catch(next);
+};
+
+exports.patchUserFirstName = (req, res, next) => {
+  const { username } = req.params;
+  const { first_name, last_name, password } = req.body;
+
+  validateUserPassword({ username, password })
+    .then(() => {
+      if (first_name !== undefined) {
+        return updateUserFirstName(username, first_name);
+      } else if (last_name !== undefined) {
+        return updateUserLastName(username, last_name)
+      } else {
+        res.status(400).send({ msg: "bad request" });
+      }
+    })
+    .then((user) => {
+      res.status(201).send(user);
     })
     .catch(next);
 };

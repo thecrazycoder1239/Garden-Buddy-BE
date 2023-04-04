@@ -105,3 +105,36 @@ exports.selectUsersPlantsByUsername = (username) => {
       return rows;
     });
 };
+
+exports.updateUserFirstName = (username, first_name) => {
+  return db
+    .query(
+      `UPDATE users
+  SET
+    first_name = $1
+  WHERE 
+      username = $2
+  RETURNING *;`,
+      [first_name, username]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};
+
+
+exports.updateUserLastName = (username, last_name) => {
+  return db
+    .query(
+      `UPDATE users
+  SET
+    last_name = $1
+  WHERE 
+      username = $2
+  RETURNING *;`,
+      [last_name, username]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};
